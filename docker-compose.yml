@@ -33,7 +33,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.logsystem == true
+          - node.labels.bidder == true
 
   grafana:
     image: grafana/grafana:latest
@@ -62,7 +62,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.logsystem == true
+          - node.labels.bidder == true
 
 volumes:
   grafana-data:
