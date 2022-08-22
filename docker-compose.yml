@@ -3,7 +3,7 @@ version: "3.7"
 x-logging: &loki-logging
   driver: json-file
   options:
-    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"    
+    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
 
 services:
   loki:
@@ -15,7 +15,11 @@ services:
     command: -config.file=/mnt/config/loki-config.yaml
     networks:
       - loki
-    logging: *loki-logging  
+    logging: *loki-logging
+    deploy:
+      placement:
+        constraints:
+          - node.labels.logsystem == true
 
   promtail:
     image: grafana/promtail:2.2.1
@@ -25,32 +29,43 @@ services:
     command: -config.file /mnt/config/promtail-config.yaml
     networks:
       - loki
-    logging: *loki-logging  
+    logging: *loki-logging
+    deploy:
+      placement:
+        constraints:
+          - node.labels.logsystem == true
 
   grafana:
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
-    volumes: 
+    volumes:
       - grafana-data:/var/lib/grafana
       - ./config/grafana/provisioning/:/etc/grafana/provisioning/
     networks:
       - loki
     environment:
       GF_SECURITY_ADMIN_PASSWORD: testloki
-    logging: *loki-logging    
+    logging: *loki-logging
+    deploy:
+      placement:
+        constraints:
+          - node.labels.logsystem == true
 
   demo-app:
     image: ealen/echo-server
-    ports: 
-        - "3001:80"   
+    ports:
+      - "3001:80"
     networks:
       - loki
-    logging: *loki-logging  
+    logging: *loki-logging
+    deploy:
+      placement:
+        constraints:
+          - node.labels.logsystem == true
 
 volumes:
-  grafana-data: 
+  grafana-data:
 
 networks:
   loki:
-
