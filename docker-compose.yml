@@ -10,8 +10,9 @@ services:
     image: grafana/loki:2.2.1
     ports:
       - "3100"
-    volumes:
-      - ./config/loki/loki-config.yaml:/mnt/config/loki-config.yaml
+    configs:
+      - source: loki_config
+        target: /mnt/config/loki-config.yaml
     command: -config.file=/mnt/config/loki-config.yaml
     networks:
       - loki
@@ -23,8 +24,10 @@ services:
 
   promtail:
     image: grafana/promtail:2.2.1
+    configs:
+      - source: promtail_config
+        target: /mnt/config/promtail-config.yaml
     volumes:
-      - ./config/loki/promtail-config.yaml:/mnt/config/promtail-config.yaml
       - /var/lib/docker/containers:/host/containers
     command: -config.file /mnt/config/promtail-config.yaml
     networks:
@@ -39,9 +42,12 @@ services:
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
+    configs:
+      - source: grafana_config
+        target: /etc/grafana/provisioning/
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+      - /etc/grafana/provisioning/
     networks:
       - loki
     environment:
@@ -63,6 +69,14 @@ services:
       placement:
         constraints:
           - node.labels.bidder == true
+
+configs:
+  promtail_config:
+    file: ./config/loki/promtail-config.yaml
+  loki_config:
+    file: ./config/loki/loki-config.yaml
+  grafana_config:
+    file: ./config/grafana/provisioning/
 
 volumes:
   grafana-data:
