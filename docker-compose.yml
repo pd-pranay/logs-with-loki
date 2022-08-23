@@ -20,7 +20,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.logsystem == true
+          - node.labels.logsystem=true
 
   promtail:
     image: grafana/promtail:2.2.1
@@ -33,10 +33,6 @@ services:
     networks:
       - loki
     logging: *loki-logging
-    deploy:
-      placement:
-        constraints:
-          - node.labels.bidder == true
 
   grafana:
     image: grafana/grafana:latest
@@ -44,10 +40,9 @@ services:
       - "3000:3000"
     configs:
       - source: grafana_config
-        target: /etc/grafana/provisioning/
+        target: /etc/grafana/provisioning/datasources/loki-datasource.yml
     volumes:
       - grafana-data:/var/lib/grafana
-      - /etc/grafana/provisioning/
     networks:
       - loki
     environment:
@@ -56,7 +51,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.logsystem == true
+          - node.labels.logsystem=true
 
   demo-app:
     image: ealen/echo-server
@@ -68,7 +63,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.bidder == true
+          - node.labels.bidder=true
 
 configs:
   promtail_config:
@@ -76,7 +71,7 @@ configs:
   loki_config:
     file: ./config/loki/loki-config.yaml
   grafana_config:
-    file: ./config/grafana/provisioning/
+    file: ./config/grafana/provisioning/datasources/loki-datasource.yml
 
 volumes:
   grafana-data:
