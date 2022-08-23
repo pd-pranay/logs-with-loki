@@ -33,6 +33,8 @@ services:
     networks:
       - loki
     logging: *loki-logging
+    deploy:
+      mode: global
 
   grafana:
     image: grafana/grafana:latest
