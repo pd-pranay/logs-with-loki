@@ -20,7 +20,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.logsystem=true
+          - node.labels.logsystem==true
 
   promtail:
     image: grafana/promtail:2.2.1
@@ -51,7 +51,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.logsystem=true
+          - node.labels.logsystem==true
 
   demo-app:
     image: ealen/echo-server
@@ -63,7 +63,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.bidder=true
+          - node.labels.bidder==true
 
 configs:
   promtail_config:
