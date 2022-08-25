@@ -67,6 +67,22 @@ services:
         constraints:
           - node.labels.bidder==true
 
+  chi-app:
+    image: 127.0.0.1:5000/chi
+    build:
+      context: ./chirouter
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5555:5555"
+    networks:
+      - loki
+    logging: *loki-logging
+    deploy:
+      placement:
+        constraints:
+          - node.labels.bidder==true
+
 configs:
   promtail_config:
     file: ./config/loki/promtail-config.yaml
