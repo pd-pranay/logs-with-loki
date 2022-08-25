@@ -1,0 +1,11 @@
+sum(count_over_time({container_name="rtbstack_demo-app.1.9a778puhl585ncrk7un6u03hg"} 
+[1h]))
+
+sum(count_over_time({job="dockerlogs"}[1h]))
+
+
+//Graph Stat
+sum by(stream, container_id) 
+(count_over_time({container_name="rtbstack_demo-app.1.9a778puhl585ncrk7un6u03hg"} 
+|= `GET` [1h]))
+
