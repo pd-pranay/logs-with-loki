@@ -7,7 +7,7 @@ x-logging: &loki-logging
 
 services:
   loki:
-    image: grafana/loki:2.2.1
+    image: grafana/loki:latest
     ports:
       - "3100"
     configs:
@@ -18,12 +18,13 @@ services:
       - loki
     logging: *loki-logging
     deploy:
+      replicas: 2
       placement:
         constraints:
           - node.labels.logsystem==true
 
   promtail:
-    image: grafana/promtail:2.2.1
+    image: grafana/promtail:2.4.2
     configs:
       - source: promtail_config
         target: /mnt/config/promtail-config.yaml
@@ -35,6 +36,7 @@ services:
     logging: *loki-logging
     deploy:
       mode: global
+      replicas: 2
 
   grafana:
     image: grafana/grafana:latest
@@ -82,6 +84,38 @@ services:
       placement:
         constraints:
           - node.labels.bidder==true
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - loki
+    command: server ~ --address ':9000' --console-address ':9001'
+    deploy:
+      placement:
+        constraints:
+          - node.labels.logsystem==true
+
+  createbuckets:
+    image: minio/mc
+    networks:
+      - loki
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add elite_minio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc rm -r --force elite_minio/bidder_logs;
+      /usr/bin/mc mb elite_minio/bidder_logs;
+      /usr/bin/mc policy set private elite_minio/bidder_logs;
+      exit 0;
+      "
+    deploy:
+      placement:
+        constraints:
+          - node.labels.logsystem==true
 
 configs:
   promtail_config:
