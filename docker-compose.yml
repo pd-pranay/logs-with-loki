@@ -106,10 +106,10 @@ services:
       - minio
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc config host add elite_minio http://minio:9000 minioadmin minioadmin;
-      /usr/bin/mc rm -r --force elite_minio/bidder_logs;
-      /usr/bin/mc mb elite_minio/bidder_logs;
-      /usr/bin/mc policy set private elite_minio/bidder_logs;
+      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc rm -r --force myminio/loki;
+      /usr/bin/mc mb myminio/loki;
+      /usr/bin/mc policy set private myminio/loki;
       exit 0;
       "
     deploy:
