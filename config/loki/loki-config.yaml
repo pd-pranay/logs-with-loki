@@ -17,11 +17,12 @@ ingester:
       kvstore:
         store: memberlist
       replication_factor: 3
-    final_sleep: 0s
-  chunk_idle_period: 1h
-  chunk_retain_period: 30s
-  chunk_target_size: 5048576
-  max_chunk_age: 30m
+      heartbeat_timeout: 10m
+    final_sleep: 20s
+  chunk_idle_period: 1h # How long chunks should sit in-memory with no updates before being flushed
+  chunk_retain_period: 20s # How long chunks should be retained in-memory after they've been flushed.
+  chunk_target_size: 5572864 # 5mb
+  max_chunk_age: 1h
   max_transfer_retries: 0
 
 memberlist:
@@ -29,9 +30,9 @@ memberlist:
   bind_port: 7946
   join_members:
     - loki:7946
-  max_join_backoff: 2m
-  max_join_retries: 20
-  min_join_backoff: 10s
+  max_join_backoff: 5m
+  max_join_retries: 10
+  min_join_backoff: 1s
 
 schema_config:
   configs:

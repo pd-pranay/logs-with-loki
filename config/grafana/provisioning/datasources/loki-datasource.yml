@@ -4,6 +4,7 @@ datasources:
   - name: Loki
     type: loki
     access: proxy
+    orgId: 1
     url: http://loki:3100
     jsonData:
-      maxLines: 1000
+      maxLines: 1000 #Upper limit for the number of log lines returned by Loki (default is 1000). Lower this limit if your browser is sluggish when displaying logs in Explore.
