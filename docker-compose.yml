@@ -9,7 +9,7 @@ services:
   loki:
     image: grafana/loki:latest
     ports:
-      - "3100"
+      - "6100"
     volumes:
       - ./config/loki/loki-config.yaml:/mnt/config/loki-config.yaml
     command: -config.file=/mnt/config/loki-config.yaml
@@ -40,7 +40,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3000:3000"
+      - "7000:3000"
     configs:
       - source: grafana_config
         target: /etc/grafana/provisioning/datasources/loki-datasource.yml

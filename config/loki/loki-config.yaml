@@ -1,7 +1,7 @@
 auth_enabled: false
 
 server:
-  http_listen_port: 3100
+  http_listen_port: 6100
 
 distributor:
   ring:
@@ -16,7 +16,7 @@ ingester:
     ring:
       kvstore:
         store: memberlist
-      replication_factor: 3
+      replication_factor: 1
       heartbeat_timeout: 10m
     final_sleep: 20s
   chunk_idle_period: 1h # How long chunks should sit in-memory with no updates before being flushed
