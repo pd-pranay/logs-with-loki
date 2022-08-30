@@ -10,14 +10,15 @@ services:
     image: grafana/loki:latest
     ports:
       - "6100"
-    volumes:
-      - ./config/loki/loki-config.yaml:/mnt/config/loki-config.yaml
+    configs:
+      - source: loki_config
+        target: /mnt/config/loki-config.yaml
     command: -config.file=/mnt/config/loki-config.yaml
     networks:
       - loki
     logging: *loki-logging
     deploy:
-      replicas: 2
+      # replicas: 2
       placement:
         constraints:
           - node.labels.logsystem==true
@@ -35,7 +36,7 @@ services:
     logging: *loki-logging
     deploy:
       mode: global
-      replicas: 2
+      # replicas: 2
 
   grafana:
     image: grafana/grafana:latest
@@ -84,37 +85,37 @@ services:
         constraints:
           - node.labels.bidder==true
 
-  # minio:
-  #   image: minio/minio:latest
-  #   ports:
-  #     - "9000:9000"
-  #     - "9001:9001"
-  #   networks:
-  #     - loki
-  #   command: server ~ --address ':9000' --console-address ':9001'
-  #   deploy:
-  #     placement:
-  #       constraints:
-  #         - node.labels.logsystem==true
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - loki
+    command: server ~ --address ':9000' --console-address ':9001'
+    deploy:
+      placement:
+        constraints:
+          - node.labels.logsystem==true
 
-  # createbuckets:
-  #   image: minio/mc
-  #   networks:
-  #     - loki
-  #   depends_on:
-  #     - minio
-  #   entrypoint: >
-  #     /bin/sh -c "
-  #     /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
-  #     /usr/bin/mc rm -r --force myminio/loki;
-  #     /usr/bin/mc mb myminio/loki;
-  #     /usr/bin/mc policy set private myminio/loki;
-  #     exit 0;
-  #     "
-  #   deploy:
-  #     placement:
-  #       constraints:
-  #         - node.labels.logsystem==true
+  createbuckets:
+    image: minio/mc
+    networks:
+      - loki
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc rm -r --force myminio/loki;
+      /usr/bin/mc mb myminio/loki;
+      /usr/bin/mc policy set private myminio/loki;
+      exit 0;
+      "
+    deploy:
+      placement:
+        constraints:
+          - node.labels.logsystem==true
 
 configs:
   promtail_config:
