@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -17,26 +16,17 @@ func main() {
 	// r.Use(middleware.RequestID)
 	r.Use(middleware.Recoverer)
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		array := []string{"1", "b"}
-		pos := r.URL.Query().Get("index")
-		i, err := strconv.Atoi(pos)
-		if err != nil {
-			panic(err)
-		}
-		log.Println("array[i]", array[i])
-		str := "hello from get " + array[i]
-		w.Write([]byte(str))
+	r.Get("/api/vast", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("vast"))
 	})
-	r.Post("/", func(w http.ResponseWriter, r *http.Request) {
-		array := []string{"1", "b"}
-		pos := r.URL.Query().Get("index")
-		i, err := strconv.Atoi(pos)
-		if err != nil {
-			panic(err)
-		}
-		str := "hello from post " + array[i]
-		w.Write([]byte(str))
+	r.Post("/api/rtb", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("rtb"))
+	})
+	r.Post("/api/js", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("js"))
+	})
+	r.Post("/api/hb", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hb"))
 	})
 
 	log.Println("server started running on port 5555")
