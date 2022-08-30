@@ -14,8 +14,6 @@ services:
       - source: loki_config
         target: /mnt/config/loki-config.yaml
     command: -config.file=/mnt/config/loki-config.yaml
-    networks:
-      - loki
     logging: *loki-logging
     deploy:
       # replicas: 2
@@ -31,8 +29,6 @@ services:
     volumes:
       - /var/lib/docker/containers:/host/containers
     command: -config.file /mnt/config/promtail-config.yaml
-    networks:
-      - loki
     logging: *loki-logging
     deploy:
       mode: global
@@ -47,8 +43,6 @@ services:
         target: /etc/grafana/provisioning/datasources/loki-datasource.yml
     volumes:
       - grafana-data:/var/lib/grafana
-    networks:
-      - loki
     environment:
       GF_SECURITY_ADMIN_PASSWORD: testloki
     logging: *loki-logging
@@ -61,8 +55,6 @@ services:
     image: ealen/echo-server
     ports:
       - "3001:80"
-    networks:
-      - loki
     logging: *loki-logging
     deploy:
       placement:
@@ -77,8 +69,6 @@ services:
     restart: always
     ports:
       - "5555:5555"
-    networks:
-      - loki
     logging: *loki-logging
     deploy:
       placement:
@@ -90,8 +80,6 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
-    networks:
-      - loki
     command: server ~ --address ':9000' --console-address ':9001'
     deploy:
       placement:
@@ -100,8 +88,6 @@ services:
 
   createbuckets:
     image: minio/mc
-    networks:
-      - loki
     depends_on:
       - minio
     entrypoint: >
